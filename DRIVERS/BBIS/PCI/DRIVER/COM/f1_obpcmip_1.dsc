@@ -1,7 +1,7 @@
 #************************** BBIS3 board descriptor **************************
 #
 #        Author: kp
-#         $Date: 2001/08/16 10:06:55 $
+#         $Date: 2001/04/11 12:26:16 $
 #     $Revision: 1.1 $
 #
 #   Description: Metadescriptor for F1 onboard PC-MIP slots

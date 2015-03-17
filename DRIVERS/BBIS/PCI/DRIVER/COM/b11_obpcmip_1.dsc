@@ -1,14 +1,14 @@
 #************************** BBIS3 board descriptor **************************
 #
 #        Author: kp
-#         $Date: 2001/08/16 10:06:55 $
+#         $Date: 2001/04/11 12:26:18 $
 #     $Revision: 1.1 $
 #
-#   Description: Metadescriptor for F1 onboard PC-MIP slots
+#   Description: Metadescriptor for B11 onboard PC-MIP slots
 #
 #****************************************************************************
 
-F1_OBPCMIP {
+B11_OBPCMIP {
 	#------------------------------------------------------------------------
 	#	general parameters (don't modify)
 	#------------------------------------------------------------------------

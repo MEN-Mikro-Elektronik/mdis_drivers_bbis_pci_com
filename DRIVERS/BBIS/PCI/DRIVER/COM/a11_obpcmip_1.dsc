@@ -1,14 +1,14 @@
 #************************** BBIS3 board descriptor **************************
 #
 #        Author: kp
-#         $Date: 2001/08/16 10:06:55 $
-#     $Revision: 1.1 $
+#         $Date: 2001/04/11 12:26:13 $
+#     $Revision: 1.2 $
 #
-#   Description: Metadescriptor for F1 onboard PC-MIP slots
+#   Description: Metadescriptor for A11 onboard PC-MIP slots
 #
 #****************************************************************************
 
-F1_OBPCMIP {
+A11_OBPCMIP {
 	#------------------------------------------------------------------------
 	#	general parameters (don't modify)
 	#------------------------------------------------------------------------
@@ -18,8 +18,9 @@ F1_OBPCMIP {
 	#------------------------------------------------------------------------
 	#	PCI specific parameters (don't modify it !)
 	#------------------------------------------------------------------------
-	PCI_BUS_PATH		= BINARY   			   # leave blank!
+	PCI_BUS_PATH		= BINARY   0x10		   # device number of PCI-PCI
+											   # bridge on bus 0 to PC-MIPs
+	DEVICE_SLOT_0		= U_INT32  0x00
+	DEVICE_SLOT_1		= U_INT32  0x01
 
-	DEVICE_SLOT_0		= U_INT32  0x1a
-	DEVICE_SLOT_1		= U_INT32  0x1d
 }
