@@ -12,17 +12,17 @@
  *  Can be used for any PCI base board like D202, F203 or PCI Devices
  *  that reside onboard on CPU cards like D2, A11.
  *
- *  MDIS and PCI BBIS does not use the plug-and-play philosophy of the PCI 
+ *  MDIS and PCI BBIS does not use the plug-and-play philosophy of the PCI
  *  Bus, i.e. we do not search for devices. The user has to specify the
- *  location on the bus in the board descriptor. 
+ *  location on the bus in the board descriptor.
  *
- *  This ensures that a specific device has always the same name in 
- *  the system, even if additional devices were added or the BIOS 
+ *  This ensures that a specific device has always the same name in
+ *  the system, even if additional devices were added or the BIOS
  *  rearanges the PCI bus numbers.
  *
  *  One instance of this PCI BBIS handles exactly one bus number in the
  *  PCI system. The user has to specify the path to this bus using the
- *  descriptor key PCI_BUS_PATH. This is a list of PCI device numbers, 
+ *  descriptor key PCI_BUS_PATH. This is a list of PCI device numbers,
  *  that must belong to PCI-to-PCI bridges.
  *
  *  Example: To specify the PCI bus on PC-MIP Compact-PCI carrier board
@@ -31,27 +31,27 @@
  *
  *			 PCI_BUS_PATH = BINARY 0x14,0x0d
  *
- *			 0x14 is the device number on Bus 0 of the PCI-to-PCI bridge 
+ *			 0x14 is the device number on Bus 0 of the PCI-to-PCI bridge
  *			 on the D1, that connects the internal PCI bus to the CPCI
  *			 backplane.
  *
  *			 0x0d is the device number on the CPCI backplane for slot 4.
  *
  *  PCI_BUS_PATH may be empty, if PCI bus 0 is to be controlled.
- *  
+ *
  *  It is also possible to specify the key PCI_BUS_NUMBER in the descriptor.
  *  If present, it overrides PCI_BUS_PATH. But note that the bus number may
  *  change if additional devices are installed in the PCI system.
  *
  *  The different devices on the specified PCI bus are referenced using
- *  MDIS slot numbers. Therefore the PCI BBIS maintains a table that 
+ *  MDIS slot numbers. Therefore the PCI BBIS maintains a table that
  *  contains the PCI device number for each slot.
- * 
+ *
  *  The descriptor must contain DEVICE_SLOT_<n> keys, where <n> specified
  *  the MDIS slot number and the value of this key must be the PCI device
  *  number.
  *
- *  E.g. for the A11 onboard PC-MIP slots, the device descriptor must 
+ *  E.g. for the A11 onboard PC-MIP slots, the device descriptor must
  *  contain the following entries
  *
  *		DEVICE_SLOT_0		= U_INT32  0x00
@@ -77,20 +77,20 @@
  *  During Init, the PCI BBIS looks through the given PCI_BUS_PATH. Each
  *  specified device must be a PCI-PCI bridge. It then gets the secondary
  *  bus number behind the bridge and looks at the next entry in PCI_BUS_PATH.
- * 
- *  It then looks at each device specified with DEVICE_SLOT_<n> to see 
- *  if the device has internal bridges. If so, it searches for devices 
+ *
+ *  It then looks at each device specified with DEVICE_SLOT_<n> to see
+ *  if the device has internal bridges. If so, it searches for devices
  *  behind the internal bridge. The search must detect exactly one device.
  *  If more or less are found, an error is returned.
- *  If again a brigde is found, the search continues until a non-bridge 
+ *  If again a brigde is found, the search continues until a non-bridge
  *  device is found.
  *
  *  If the device has an internal bridge, PCI BBIS returns the PCI bus/dev
  *  number on that internal bus to MDIS
- * 
+ *
  *     Required: ---
  *     Switches: _ONE_NAMESPACE_PER_DRIVER_
- * 
+ *
  *-------------------------------[ History ]---------------------------------
  *
  * $Log: bb_pci.c,v $
@@ -194,11 +194,11 @@ typedef struct {
     DESC_HANDLE *descHdl;			/* descriptor handle pointer*/
     u_int32     debugLevel;			/* debug level for BBIS     */
 	DBG_HANDLE  *debugHdl;			/* debug handle				*/
-	int32		skipDevBridgeCheck;				/* if PCI bridge is given  
-                                                   use it as MDIS PCI target */	
-	int32		pciDomainNbr;					/* PCI domain number for 
+	int32		skipDevBridgeCheck;				/* if PCI bridge is given
+                                                   use it as MDIS PCI target */
+	int32		pciDomainNbr;					/* PCI domain number for
                                                    handled devices */
-	int32		pciBusNbr[PCI_BBIS_MAX_DEVS];	/* PCI bus number for 
+	int32		pciBusNbr[PCI_BBIS_MAX_DEVS];	/* PCI bus number for
 												   handled devices */
 	int32		pciDevNbr[PCI_BBIS_MAX_DEVS];	/* device number of devices */
 	int32		pciFuncNbr[PCI_BBIS_MAX_DEVS];	/* function number of devices */
@@ -212,7 +212,7 @@ typedef struct {
 #include <MEN/bb_entry.h>	/* bbis jumptable		*/
 #include <MEN/bb_pci.h>		/* PCI bbis header file	*/
 
-	
+
 /*-----------------------------------------+
 |  GLOBALS                                 |
 +-----------------------------------------*/
@@ -251,8 +251,8 @@ static char* Ident( void );
 static int32 Cleanup(BBIS_HANDLE *h, int32 retCode);
 
 static int32 ParsePciPath( BBIS_HANDLE *h, u_int32 *pciBusNbrP );
-static int32 CheckDevBridge( 
-	BBIS_HANDLE *h, 
+static int32 CheckDevBridge(
+	BBIS_HANDLE *h,
 	u_int32 pciBusNbr,
 	u_int32 pciDevNbr,
 	u_int32 *newPciBusNbr,
@@ -260,16 +260,16 @@ static int32 CheckDevBridge(
 static int32 PciParseDev(
 	BBIS_HANDLE *h,
 #ifdef OSS_VXBUS_SUPPORT
-	VXB_DEVICE_ID busCtrlID, 
-#endif	
+	VXB_DEVICE_ID busCtrlID,
+#endif
 	u_int32 pciBusNbr,
 	u_int32 pciDevNbr,
 	int32 *vendorIDP,
 	int32 *deviceIDP,
 	int32 *headTypeP,
 	int32 *secondBusP);
-static int32 PciCfgErr( 
-	BBIS_HANDLE *h, 
+static int32 PciCfgErr(
+	BBIS_HANDLE *h,
 	char *funcName,
 	int32 error,
 	u_int32 pciBusNbr,
@@ -348,9 +348,9 @@ static int32 CfgInfoSlot( BBIS_HANDLE *h, va_list argptr );
  *                DEBUG_LEVEL              OSS_DBG_DEFAULT  see dbg.h
  *                PCI_BUS_PATH             -
  *				  PCI_BUS_NUMBER		   -
- *                PCI_DOMAIN_NUMBER        0 
- * 				  SKIP_DEV_BRIDGE_CHECK    0 (check enabled) 
- *                DEVICE_SLOT_n			   -                0...31          
+ *                PCI_DOMAIN_NUMBER        0
+ * 				  SKIP_DEV_BRIDGE_CHECK    0 (check enabled)
+ *                DEVICE_SLOT_n			   -                0...31
  *                FUNCTION_SLOT_n          0                0...7
  *                DEVNAME_SLOT_n         BBIS_SLOT_STR_UNK  DEVNAME_SIZE
  *
@@ -360,10 +360,10 @@ static int32 CfgInfoSlot( BBIS_HANDLE *h, va_list argptr );
  *				  If both are present, PCI_BUS_NUMBER takes precedence.
  *
  *---------------------------------------------------------------------------
- *  Input......:  osHdl     pointer to os specific structure             
- *                descSpec  pointer to os specific descriptor specifier  
- *                hP   pointer to not initialized board handle structure            
- *  Output.....:  *hP  initialized board handle structure  
+ *  Input......:  osHdl     pointer to os specific structure
+ *                descSpec  pointer to os specific descriptor specifier
+ *                hP   pointer to not initialized board handle structure
+ *  Output.....:  *hP  initialized board handle structure
  *				  return    0 | error code
  *  Globals....:  ---
  ****************************************************************************/
@@ -427,22 +427,22 @@ static int32 PCI_Init(
 	DESC_DbgLevelSet(h->descHdl, value);
 
     /* get DEBUG_LEVEL */
-    status = DESC_GetUInt32( h->descHdl, OSS_DBG_DEFAULT, 
+    status = DESC_GetUInt32( h->descHdl, OSS_DBG_DEFAULT,
 							 &(h->debugLevel),
                 "DEBUG_LEVEL");
     if ( status && (status!=ERR_DESC_KEY_NOTFOUND) )
         return( Cleanup(h,status) );
 
 	/* PCI_DOMAIN_NUMBER - optional */
-	status = DESC_GetUInt32( h->descHdl, 0, &h->pciDomainNbr, 
-							 "PCI_DOMAIN_NUMBER");							 
+	status = DESC_GetUInt32( h->descHdl, 0, &h->pciDomainNbr,
+							 "PCI_DOMAIN_NUMBER");
 
 	/* SKIP_DEV_BRIDGE_CHECK - optional */
-	status = DESC_GetUInt32( h->descHdl, 0, &h->skipDevBridgeCheck, 
+	status = DESC_GetUInt32( h->descHdl, 0, &h->skipDevBridgeCheck,
 							 "SKIP_DEV_BRIDGE_CHECK");
 
 	/*--- get PCI bus ---*/
-    status = DESC_GetUInt32( h->descHdl, 0, 
+    status = DESC_GetUInt32( h->descHdl, 0,
 							 &pciBusNbr, "PCI_BUS_NUMBER");
     if ( status && (status!=ERR_DESC_KEY_NOTFOUND) )
         return( Cleanup(h,status) );
@@ -452,7 +452,7 @@ static int32 PCI_Init(
 		/*--- get PCI path ---*/
 		h->pciPathLen = PCI_BBIS_MAX_PATH;
 
-		status = DESC_GetBinary( h->descHdl, (u_int8*)"", 0,  
+		status = DESC_GetBinary( h->descHdl, (u_int8*)"", 0,
 								 h->pciPath, &h->pciPathLen,
 								 "PCI_BUS_PATH");
 
@@ -464,7 +464,7 @@ static int32 PCI_Init(
 		/*------------------------------------------------------------+
 		|  Now parse the PCI_PATH to determine bus number of devices  |
 		+------------------------------------------------------------*/
-#ifdef DBG	
+#ifdef DBG
 		DBGWRT_2((DBH, " PCI_PATH="));
 		for(i=0; i<h->pciPathLen; i++){
 			DBGWRT_2((DBH, "0x%x", h->pciPath[i]));
@@ -478,24 +478,24 @@ static int32 PCI_Init(
 		}
 	} else {
 		DBGWRT_1((DBH,"BB - %s: Using main PCI Bus Number from desc %d"
-		               "on PCI Domain %d\n", 
+		               "on PCI Domain %d\n",
 				  BBNAME, pciBusNbr, h->pciDomainNbr ));
 	}
-	
+
 	h->devCount = 0;
 
 	for( i=0; i<PCI_BBIS_MAX_DEVS; i++ ){
 		h->pciDevNbr[i] = PCI_NO_DEV;
 
 		/* get DEVICE_SLOT_n */
-		status = DESC_GetUInt32( h->descHdl, 0, &value, 
+		status = DESC_GetUInt32( h->descHdl, 0, &value,
 								 "DEVICE_SLOT_%d", i);
-		
+
 		/* DEVICE_SLOT_n specified? */
 		if( status == ERR_SUCCESS ){
-			
+
 			DBGWRT_2(( DBH, " DEVICE_SLOT_%d = 0x%x\n", i, value ));
-		
+
 			/*--- check for valid device number ---*/
 			if( value <= 31 )
 				h->pciDevNbr[i] = (int32)value;
@@ -505,11 +505,11 @@ static int32 PCI_Init(
 				return( Cleanup(h,ERR_BBIS_DESC_PARAM) );
 			}
 			h->devCount++;
-		
+
 			/* get FUNCTION_SLOT_n */
-			status = DESC_GetUInt32( h->descHdl, 0, &value, 
+			status = DESC_GetUInt32( h->descHdl, 0, &value,
 									 "FUNCTION_SLOT_%d", i );
-	#if DBG		
+	#if DBG
 			if( status == ERR_SUCCESS )
 				DBGWRT_2(( DBH, " FUNCTION_SLOT_%d = 0x%x\n", i, value ));
 	#endif
@@ -526,23 +526,23 @@ static int32 PCI_Init(
 
 			/* get DEVNAME_SLOT_n */
 			devNameSize = DEVNAME_SIZE;
-			status = DESC_GetString( h->descHdl, BBIS_SLOT_STR_UNK, h->devName[i], 
+			status = DESC_GetString( h->descHdl, BBIS_SLOT_STR_UNK, h->devName[i],
 									 &devNameSize, "DEVNAME_SLOT_%d", i );
 			if ( status && (status!=ERR_DESC_KEY_NOTFOUND) )
 				return( Cleanup(h,status) );
-	#if DBG		
+	#if DBG
 			if( status == ERR_SUCCESS )
 				DBGWRT_2(( DBH, " DEVNAME_SLOT_%d = %s\n", i, h->devName[i] ));
 	#endif
-		
+
 		}/* DEVICE_SLOT_n specified? */
 	}/*for*/
-	
+
 	/* exit descHdl */
     status = DESC_Exit( &h->descHdl );
     if(status)
         return( Cleanup(h,status) );
-        		
+
 	/*--- check if any device specified ---*/
 	if( h->devCount == 0 ){
 		DBGWRT_ERR((DBH, "*** %s_Init: No devices in descriptor!\n", BBNAME));
@@ -558,7 +558,7 @@ static int32 PCI_Init(
 		if( h->pciDevNbr[i] != PCI_NO_DEV ) {
 
 			status = CheckDevBridge( h, pciBusNbr, h->pciDevNbr[i],
-									 (u_int32 *)&h->pciBusNbr[i], 
+									 (u_int32 *)&h->pciBusNbr[i],
 									 (u_int32 *)&h->pciDevNbr[i]);
 
 			if( status ){
@@ -577,7 +577,7 @@ static int32 PCI_Init(
  *                Do nothing
  *
  *---------------------------------------------------------------------------
- *  Input......:  h    pointer to board handle structure    
+ *  Input......:  h    pointer to board handle structure
  *  Output.....:  return    0 | error code
  *  Globals....:  ---
  ****************************************************************************/
@@ -596,7 +596,7 @@ static int32 PCI_BrdInit(
  *                Do nothing
  *
  *---------------------------------------------------------------------------
- *  Input......:  h    pointer to board handle structure   
+ *  Input......:  h    pointer to board handle structure
  *  Output.....:  return    0 | error code
  *  Globals....:  ---
  ****************************************************************************/
@@ -662,7 +662,7 @@ static int32 PCI_Exit(
  *                the specified board. (here always PCI)
  *
  *                The BBIS_BRDINFO_DEVBUSTYPE code returns the bustype of
- *                the specified device - not the board bus type. 
+ *                the specified device - not the board bus type.
  * 				  (here always PCI)
  *
  *                The BBIS_BRDINFO_FUNCTION code returns the information
@@ -685,11 +685,11 @@ static int32 PCI_Exit(
  *                characters. The length of the returned string, including
  *                the terminating null character, must not exceed
  *                BBIS_BRDINFO_BRDNAME_MAXSIZE.
- *                Examples: D201 board, PCI device, Chameleon FPGA 
+ *                Examples: D201 board, PCI device, Chameleon FPGA
  *
  *---------------------------------------------------------------------------
- *  Input......:  code      reference to the information we need    
- *                ...       variable arguments                      
+ *  Input......:  code      reference to the information we need
+ *                ...       variable arguments
  *  Output.....:  *...      variable arguments
  *                return    0 | error code
  *  Globals....:  ---
@@ -705,7 +705,7 @@ static int32 PCI_BrdInfo(
     va_start(argptr,code);
 
     switch ( code ) {
-        
+
         /* supported functions */
         case BBIS_BRDINFO_FUNCTION:
         {
@@ -724,12 +724,12 @@ static int32 PCI_BrdInfo(
             u_int32 *numSlot = va_arg( argptr, u_int32* );
 
 			/*
-			 * No board handle here, return maximum 
+			 * No board handle here, return maximum
 			 */
-            *numSlot = PCI_BBIS_MAX_DEVS; 
+            *numSlot = PCI_BBIS_MAX_DEVS;
             break;
         }
-		
+
 		/* bus type */
         case BBIS_BRDINFO_BUSTYPE:
         {
@@ -782,12 +782,12 @@ static int32 PCI_BrdInfo(
 			char	*brdName = va_arg( argptr, char* );
 			char	*from;
 
-			/* 
+			/*
 			 * build hw name
-			 */  
+			 */
 			from = "PCI device";
 			while( (*brdName++ = *from++) );	/* copy string */
-			
+
 			break;
 		}
 
@@ -821,7 +821,7 @@ static int32 PCI_BrdInfo(
  *                the PCI domain on which the specified device resides
  *                (introduced 2011)
  *
- *                The BBIS_CFGINFO_PCI_DEVNBR code returns the device number 
+ *                The BBIS_CFGINFO_PCI_DEVNBR code returns the device number
  *                on the PCI bus on which the specified device resides
  *
  *                The BBIS_CFGINFO_PCI_FUNCNBR code returns the function
@@ -834,9 +834,9 @@ static int32 PCI_BrdInfo(
  *                the name of the plugged device.
  *
  *---------------------------------------------------------------------------
- *  Input......:  h			pointer to board handle structure       
- *                code      reference to the information we need    
- *                ...       variable arguments                      
+ *  Input......:  h			pointer to board handle structure
+ *                code      reference to the information we need
+ *                ...       variable arguments
  *  Output.....:  ...       variable arguments
  *                return    0 | error code
  *  Globals....:  ---
@@ -861,7 +861,7 @@ static int32 PCI_CfgInfo(
             u_int32 *busNbr = va_arg( argptr, u_int32* );
             u_int32 mSlot   = va_arg( argptr, u_int32 );
 
-			if ( (mSlot >= PCI_BBIS_MAX_DEVS) || 
+			if ( (mSlot >= PCI_BBIS_MAX_DEVS) ||
 				 (h->pciDevNbr[mSlot] == PCI_NO_DEV ))
 				status = ERR_BBIS_ILL_SLOT;
 			else
@@ -876,21 +876,21 @@ static int32 PCI_CfgInfo(
 			u_int32 *domainNbr = va_arg( argptr, u_int32* );
             u_int32 mSlot      = va_arg( argptr, u_int32 );
 
-			if ( (mSlot >= PCI_BBIS_MAX_DEVS) || 
+			if ( (mSlot >= PCI_BBIS_MAX_DEVS) ||
 				 (h->pciDevNbr[mSlot] == PCI_NO_DEV ))
 				status = ERR_BBIS_ILL_SLOT;
 			else
 				*domainNbr = h->pciDomainNbr;
-				
+
 			break;
-		}	
-		
+		}
+
         case BBIS_CFGINFO_PCI_DEVNBR:
         {
             u_int32 mSlot   = va_arg( argptr, u_int32 );
             u_int32 *devNbr = va_arg( argptr, u_int32* );
 
-			if ( (mSlot >= PCI_BBIS_MAX_DEVS) || 
+			if ( (mSlot >= PCI_BBIS_MAX_DEVS) ||
 				 (h->pciDevNbr[mSlot] == PCI_NO_DEV ))
 				status = ERR_BBIS_ILL_SLOT;
 			else
@@ -904,7 +904,7 @@ static int32 PCI_CfgInfo(
             u_int32 mSlot   = va_arg( argptr, u_int32 );
             u_int32 *devNbr = va_arg( argptr, u_int32* );
 
-			if ( (mSlot >= PCI_BBIS_MAX_DEVS) || 
+			if ( (mSlot >= PCI_BBIS_MAX_DEVS) ||
 				 (h->pciDevNbr[mSlot] == PCI_NO_DEV ))
 				status = ERR_BBIS_ILL_SLOT;
 			else
@@ -916,7 +916,7 @@ static int32 PCI_CfgInfo(
 		/* slot information for PnP support*/
 		case BBIS_CFGINFO_SLOT:
 		{
-			status = CfgInfoSlot( h, argptr ); 
+			status = CfgInfoSlot( h, argptr );
 			break;
 		}
 
@@ -939,9 +939,9 @@ static int32 PCI_CfgInfo(
  *                Do nothing
  *
  *---------------------------------------------------------------------------
- *  Input......:  h    pointer to board handle structure   
- *                mSlot     module slot number                  
- *                enable    interrupt setting                   
+ *  Input......:  h    pointer to board handle structure
+ *                mSlot     module slot number
+ *                enable    interrupt setting
  *  Output.....:  return    0
  *  Globals....:  ---
  ****************************************************************************/
@@ -963,8 +963,8 @@ static int32 PCI_IrqEnable(
  *                Do nothing
  *
  *---------------------------------------------------------------------------
- *  Input......:  h    pointer to board handle structure   
- *                mSlot     module slot number                  
+ *  Input......:  h    pointer to board handle structure
+ *                mSlot     module slot number
  *  Output.....:  return    BBIS_IRQ_UNK
  *  Globals....:  ---
  ****************************************************************************/
@@ -985,8 +985,8 @@ static int32 PCI_IrqSrvInit(
  *                Do nothing
  *
  *---------------------------------------------------------------------------
- *  Input......:  h    pointer to board handle structure   
- *                mSlot     module slot number                  
+ *  Input......:  h    pointer to board handle structure
+ *                mSlot     module slot number
  *  Output.....:  ---
  *  Globals....:  ---
  ****************************************************************************/
@@ -1004,9 +1004,9 @@ static void PCI_IrqSrvExit(
  *                Do nothing
  *
  *---------------------------------------------------------------------------
- *  Input......:  h    pointer to board handle structure   
- *                mSlot     module slot number                  
- *                enable    interrupt setting                   
+ *  Input......:  h    pointer to board handle structure
+ *                mSlot     module slot number
+ *                enable    interrupt setting
  *  Output.....:  return    0
  *  Globals....:  ---
  ****************************************************************************/
@@ -1027,8 +1027,8 @@ static int32 PCI_ExpEnable(
  *                Do nothing
  *
  *---------------------------------------------------------------------------
- *  Input......:  h    pointer to board handle structure   
- *                mSlot     module slot number                  
+ *  Input......:  h    pointer to board handle structure
+ *                mSlot     module slot number
  *  Output.....:  return    BBIS_IRQ_NO
  *  Globals....:  ---
  ****************************************************************************/
@@ -1048,10 +1048,10 @@ static int32 PCI_ExpSrv(
  *                Do nothing
  *
  *---------------------------------------------------------------------------
- *  Input......:  h    pointer to board handle structure   
- *                mSlot     module slot number                  
- *                addrMode  MDIS_MODE_A08 | MDIS_MODE_A24       
- *                dataMode  MDIS_MODE_PCI6 | MDIS_MODE_D32       
+ *  Input......:  h    pointer to board handle structure
+ *                mSlot     module slot number
+ *                addrMode  MDIS_MODE_A08 | MDIS_MODE_A24
+ *                dataMode  MDIS_MODE_PCI6 | MDIS_MODE_D32
  *  Output.....:  return    0
  *  Globals....:  ---
  ****************************************************************************/
@@ -1073,8 +1073,8 @@ static int32 PCI_SetMIface(
  *                Do nothing
  *
  *---------------------------------------------------------------------------
- *  Input......:  h    pointer to board handle structure   
- *                mSlot     module slot number                  
+ *  Input......:  h    pointer to board handle structure
+ *                mSlot     module slot number
  *  Output.....:  return    0
  *  Globals....:  ---
  ****************************************************************************/
@@ -1094,12 +1094,12 @@ static int32 PCI_ClrMIface(
  *                Do nothing
  *
  *---------------------------------------------------------------------------
- *  Input......:  h    pointer to board handle structure   
- *                mSlot     module slot number                  
- *                addrMode  MDIS_MODE_A08 | MDIS_MODE_A24    
- *                dataMode  MDIS_MODE_PCI6 | MDIS_MODE_D32      
- *                mAddr     pointer to address space            
- *                mSize     size of address space               
+ *  Input......:  h    pointer to board handle structure
+ *                mSlot     module slot number
+ *                addrMode  MDIS_MODE_A08 | MDIS_MODE_A24
+ *                dataMode  MDIS_MODE_PCI6 | MDIS_MODE_D32
+ *                mAddr     pointer to address space
+ *                mSize     size of address space
  *  Output.....:  return    0 | error code
  *  Globals....:  ---
  ****************************************************************************/
@@ -1128,10 +1128,10 @@ static int32 PCI_GetMAddr(
  *                M_BB_DEBUG_LEVEL     board debug level          see dbg.h
  *
  *---------------------------------------------------------------------------
- *  Input......:  h    pointer to board handle structure           
- *                mSlot     	module slot number                          
- *                code      	setstat code                                
- *                value32_or_64 setstat value or ptr to blocksetstat data   
+ *  Input......:  h    pointer to board handle structure
+ *                mSlot     	module slot number
+ *                code      	setstat code
+ *                value32_or_64 setstat value or ptr to blocksetstat data
  *  Output.....:  return    	0 | error code
  *  Globals....:  ---
  ****************************************************************************/
@@ -1142,7 +1142,7 @@ static int32 PCI_SetStat(
     INT32_OR_64     value32_or_64 )
 {
 	int32 value = (int32)value32_or_64; /* 32bit value */
-	
+
     DBGWRT_1((DBH, "BB - %s_SetStat: mSlot=%d code=0x%04x value=0x%x\n",
 			  BBNAME, mSlot, code, value));
 
@@ -1172,9 +1172,9 @@ static int32 PCI_SetStat(
  *                M_MK_BLK_REV_ID      ident function table ptr   -
  *
  *---------------------------------------------------------------------------
- *  Input......:  h    pointer to board handle structure           
- *                mSlot     		module slot number                          
- *                code      		getstat code                                
+ *  Input......:  h    pointer to board handle structure
+ *                mSlot     		module slot number
+ *                code      		getstat code
  *  Output.....:  value32_or_64P    getstat value or ptr to blockgetstat data
  *                return    		0 | error code
  *  Globals....:  ---
@@ -1186,9 +1186,9 @@ static int32 PCI_GetStat(
     INT32_OR_64    *value32_or_64P )
 {
     int32 *valueP = (int32*)value32_or_64P; /* pointer to 32bit value */
-    
+
     DBGWRT_1((DBH, "BB - %s_GetStat: mSlot=%d code=0x%04x\n",BBNAME,mSlot,code));
-    
+
     switch (code) {
         /* get debug level */
         case M_BB_DEBUG_LEVEL:
@@ -1224,7 +1224,7 @@ static int32 PCI_Unused( void )		/* nodoc */
 
 /*********************************** Ident **********************************
  *
- *  Description:  Return ident string 
+ *  Description:  Return ident string
  *
  *---------------------------------------------------------------------------
  *  Input......:  -
@@ -1233,7 +1233,7 @@ static int32 PCI_Unused( void )		/* nodoc */
  ****************************************************************************/
 static char* Ident( void )		/* nodoc */
 {
-	return ( 
+	return (
 		"PCI - PCI"
 		"  Base Board Handler: $Id: bb_pci.c,v 1.13 2012/09/12 11:22:11 sy Exp $" );
 }
@@ -1244,9 +1244,9 @@ static char* Ident( void )		/* nodoc */
  *
  *		          NOTE: The h handle is invalid after calling this
  *                      function.
- *			   
+ *
  *---------------------------------------------------------------------------
- *  Input......:  h    pointer to board handle structure           
+ *  Input......:  h    pointer to board handle structure
  *                retCode	return value
  *  Output.....:  return	retCode
  *  Globals....:  -
@@ -1271,6 +1271,7 @@ static int32 Cleanup(
     +------------------------------*/
     /* release memory for the board handle */
     OSS_MemFree( h->osHdl, (int8*)h, h->ownMemSize);
+    h = NULL;
 
     /*------------------------------+
     |  return error code            |
@@ -1282,12 +1283,12 @@ static int32 Cleanup(
 /********************************* ParsePciPath ******************************
  *
  *  Description: Parses the specified PCI_BUS_PATH to find out PCI Bus Number
- *			   
- *			   
+ *
+ *
  *---------------------------------------------------------------------------
  *  Input......: h 				handle
  *  Output.....: returns:	   	error code
- *				 *pciBusNbrP	main PCI bus number for devices	
+ *				 *pciBusNbrP	main PCI bus number for devices
  *  Globals....: -
  ****************************************************************************/
 static int32 ParsePciPath( BBIS_HANDLE *h, u_int32 *pciBusNbrP ) 	/* nodoc */
@@ -1296,7 +1297,7 @@ static int32 ParsePciPath( BBIS_HANDLE *h, u_int32 *pciBusNbrP ) 	/* nodoc */
 	int32 pciBusNbr=0, pciDevNbr;
 	int32 error;
 	int32 vendorID, deviceID, headerType, secondBus;
-#ifdef OSS_VXBUS_SUPPORT	
+#ifdef OSS_VXBUS_SUPPORT
 	VXB_DEVICE_ID busCtrlID = sysGetMdisBusCtrlID();
 #endif
 
@@ -1304,36 +1305,36 @@ static int32 ParsePciPath( BBIS_HANDLE *h, u_int32 *pciBusNbrP ) 	/* nodoc */
 	for(i=0; i<h->pciPathLen; i++){
 
 		pciDevNbr = h->pciPath[i];
-		
+
 		if ( ( i==0 ) && ( 0 != h->pciDomainNbr ) ) {
-			/* as we do not know the numbering order of busses on pci domains, 
-			   try to find the device on all busses instead of looking for the 
+			/* as we do not know the numbering order of busses on pci domains,
+			   try to find the device on all busses instead of looking for the
 			   first bus on the domain                                        */
 			for(pciBusNbr=0; pciBusNbr<0xff; pciBusNbr++) {
-				error = PciParseDev( h, 
-#ifdef OSS_VXBUS_SUPPORT	
+				error = PciParseDev( h,
+#ifdef OSS_VXBUS_SUPPORT
 							busCtrlID,
 #endif
-							OSS_MERGE_BUS_DOMAIN(pciBusNbr, h->pciDomainNbr), 
+							OSS_MERGE_BUS_DOMAIN(pciBusNbr, h->pciDomainNbr),
 				            h->pciPath[0], &vendorID, &deviceID, &headerType,
 							&secondBus );
-				if ( error == ERR_SUCCESS ) 
+				if ( error == ERR_SUCCESS )
 					break; /* found device */
 			}
-			
+
 			if ( error != ERR_SUCCESS ) { /* device not found */
 				DBGWRT_ERR((DBH,"*** BB - %s: first device 0x%02x in pci bus path "
 				                "not found on domain %d!\n",
 				                BBNAME, h->pciPath[0], h->pciDomainNbr ));
-				return error;               
-			}    
+				return error;
+			}
 		} else {
 			/* parse device only once */
-			if( (error = PciParseDev( h, 
-#ifdef OSS_VXBUS_SUPPORT	
+			if( (error = PciParseDev( h,
+#ifdef OSS_VXBUS_SUPPORT
 							busCtrlID,
-#endif			
-							OSS_MERGE_BUS_DOMAIN(pciBusNbr, h->pciDomainNbr), 
+#endif
+							OSS_MERGE_BUS_DOMAIN(pciBusNbr, h->pciDomainNbr),
 				            pciDevNbr, &vendorID, &deviceID, &headerType,
 							&secondBus )))
 				return error;
@@ -1348,12 +1349,12 @@ static int32 ParsePciPath( BBIS_HANDLE *h, u_int32 *pciBusNbrP ) 	/* nodoc */
 		/*--- device is present, is it a bridge ? ---*/
 		if( (headerType & ~OSS_PCI_HEADERTYPE_MULTIFUNCTION) != OSS_PCI_HEADERTYPE_BRIDGE_TYPE ){
 			DBGWRT_ERR((DBH,"*** %s:ParsePciPath: Device is not a bridge! "
-						"domain %d bus %d dev %d vend=0x%x devId=0x%x\n", 
+						"domain %d bus %d dev %d vend=0x%x devId=0x%x\n",
 						BBNAME, h->pciDomainNbr, pciBusNbr, pciDevNbr, vendorID, deviceID ));
 
 			return ERR_BBIS_NO_CHECKLOC;
 		}
-			
+
 		/*--- it is a bridge, determine its secondary bus number ---*/
 		DBGWRT_2((DBH, " domain %d bus %d dev %d: vend=0x%x devId=0x%x second bus %d\n",
 				  h->pciDomainNbr, pciBusNbr, pciDevNbr, vendorID, deviceID, secondBus ));
@@ -1362,7 +1363,7 @@ static int32 ParsePciPath( BBIS_HANDLE *h, u_int32 *pciBusNbrP ) 	/* nodoc */
 		pciBusNbr = secondBus;
 	}
 
-	DBGWRT_1((DBH,"BB - %s: Main PCI Bus Number is %d\n", BBNAME, 
+	DBGWRT_1((DBH,"BB - %s: Main PCI Bus Number is %d\n", BBNAME,
 			  pciBusNbr ));
 
 	*pciBusNbrP = pciBusNbr;
@@ -1373,11 +1374,11 @@ static int32 ParsePciPath( BBIS_HANDLE *h, u_int32 *pciBusNbrP ) 	/* nodoc */
 /********************************* CheckDevBridge ***************************
  *
  *  Description: Check if the device has an internal bridge
- *			   
+ *
  *  If no device detected on given pciBusNbr/pciDevNbr returns NO error
  *
- *	If bridge detected on given pciDomain/pciBusNbr/pciDevNbr, searches for 
- *  devices behind the bridge. 
+ *	If bridge detected on given pciDomain/pciBusNbr/pciDevNbr, searches for
+ *  devices behind the bridge.
  *
  *  If more than one device found, aborts and returns an error.
  *
@@ -1395,8 +1396,8 @@ static int32 ParsePciPath( BBIS_HANDLE *h, u_int32 *pciBusNbrP ) 	/* nodoc */
  *				 *newPciDevNbrP new pci device number
  *  Globals....: -
  ****************************************************************************/
-static int32 CheckDevBridge( 
-	BBIS_HANDLE *h, 
+static int32 CheckDevBridge(
+	BBIS_HANDLE *h,
 	u_int32 pciBusNbr,
 	u_int32 pciDevNbr,
 	u_int32 *newPciBusNbrP,
@@ -1405,29 +1406,29 @@ static int32 CheckDevBridge(
 	int32 error;
 	int32 vendorID, deviceID, headerType, secondBus;
 	int32 devsBehindBridge;
-#ifdef OSS_VXBUS_SUPPORT	
+#ifdef OSS_VXBUS_SUPPORT
 	VXB_DEVICE_ID busCtrlID = sysGetMdisBusCtrlID();
-#endif	
+#endif
 
-	DBGWRT_1((DBH,"BB - %s: CheckDevBridge domain %d bus %d dev %d\n", BBNAME, 
+	DBGWRT_1((DBH,"BB - %s: CheckDevBridge domain %d bus %d dev %d\n", BBNAME,
 			  h->pciDomainNbr, pciBusNbr, pciDevNbr ));
 
 	*newPciBusNbrP = pciBusNbr;
 	*newPciDevNbrP = pciDevNbr;
 
 	/*--- parse device ---*/
-	if( (error = PciParseDev( h, 
-#ifdef OSS_VXBUS_SUPPORT			
-				busCtrlID, 
-#endif	
-				OSS_MERGE_BUS_DOMAIN(pciBusNbr, h->pciDomainNbr), 
-				pciDevNbr, &vendorID, &deviceID, &headerType, 
+	if( (error = PciParseDev( h,
+#ifdef OSS_VXBUS_SUPPORT
+				busCtrlID,
+#endif
+				OSS_MERGE_BUS_DOMAIN(pciBusNbr, h->pciDomainNbr),
+				pciDevNbr, &vendorID, &deviceID, &headerType,
 				&secondBus )))
 		return error;
 
 	if( vendorID == 0xffff && deviceID == 0xffff ){
 		DBGWRT_2((DBH," CheckDevBridge: Nonexistant device "
-					"domain %d bus %d dev %d\n", 
+					"domain %d bus %d dev %d\n",
 					h->pciDomainNbr, pciBusNbr, pciDevNbr ));
 		goto done;
 	}
@@ -1437,9 +1438,9 @@ static int32 CheckDevBridge(
 		|| ( h->skipDevBridgeCheck !=0 ))
 		goto done;
 
-	DBGWRT_2((DBH, " Found Bridge! domain %d bus %d dev %d\n", 
-			  h->pciDomainNbr, pciBusNbr, pciDevNbr ));	
-			
+	DBGWRT_2((DBH, " Found Bridge! domain %d bus %d dev %d\n",
+			  h->pciDomainNbr, pciBusNbr, pciDevNbr ));
+
 	/*-------------------------------------+
 	|  Now check for devices behind bridge |
 	+-------------------------------------*/
@@ -1448,12 +1449,12 @@ static int32 CheckDevBridge(
 
 	for( pciDevNbr=0; pciDevNbr<32; pciDevNbr++ ){
 		/*--- parse device ---*/
-		if( (error = PciParseDev( h, 
-#ifdef OSS_VXBUS_SUPPORT			
-				busCtrlID, 
-#endif		
-				OSS_MERGE_BUS_DOMAIN(pciBusNbr, h->pciDomainNbr), 
-				pciDevNbr, &vendorID, &deviceID, &headerType, 
+		if( (error = PciParseDev( h,
+#ifdef OSS_VXBUS_SUPPORT
+				busCtrlID,
+#endif
+				OSS_MERGE_BUS_DOMAIN(pciBusNbr, h->pciDomainNbr),
+				pciDevNbr, &vendorID, &deviceID, &headerType,
 				&secondBus )))
 			return error;
 
@@ -1461,14 +1462,14 @@ static int32 CheckDevBridge(
 			continue;
 
 		devsBehindBridge++;
-		
+
 		/*--- check if its a bridge ---*/
 		if( (headerType & ~OSS_PCI_HEADERTYPE_MULTIFUNCTION) == OSS_PCI_HEADERTYPE_BRIDGE_TYPE ){
-			DBGWRT_2((DBH, " Found Bridge(2)! domain %d bus %d dev %d\n", 
-					  h->pciDomainNbr, pciBusNbr, pciDevNbr ));	
-			
+			DBGWRT_2((DBH, " Found Bridge(2)! domain %d bus %d dev %d\n",
+					  h->pciDomainNbr, pciBusNbr, pciDevNbr ));
+
 			/*--- recourse through bridge ---*/
-			error = CheckDevBridge( h, pciBusNbr, pciDevNbr, 
+			error = CheckDevBridge( h, pciBusNbr, pciDevNbr,
 									newPciBusNbrP, newPciDevNbrP );
 
 			if( error ) return error;
@@ -1483,14 +1484,14 @@ static int32 CheckDevBridge(
 	/*--- check if exactly one device found behind bridge ---*/
 	if( devsBehindBridge != 1 ){
 		DBGWRT_ERR((DBH,"*** %s:CheckDevBridge: expecting exactly one dev, "
-					"but found %d! doman %d bus %d\n", BBNAME, devsBehindBridge, 
+					"but found %d! doman %d bus %d\n", BBNAME, devsBehindBridge,
 					h->pciDomainNbr, pciBusNbr ));
 		return ERR_BBIS_NO_CHECKLOC;
 	}
 
 done:
-	DBGWRT_1((DBH,"BB - %s: CheckDevBridge exit newbus %d newdev %d\n", 
-			  BBNAME, 
+	DBGWRT_1((DBH,"BB - %s: CheckDevBridge exit newbus %d newdev %d\n",
+			  BBNAME,
 			  *newPciBusNbrP, *newPciDevNbrP ));
 
 	return ERR_SUCCESS;
@@ -1499,8 +1500,8 @@ done:
 /********************************* PciParseDev ******************************
  *
  *  Description: Get parameters from specified PCI device's config space
- *			   
- *			   
+ *
+ *
  *---------------------------------------------------------------------------
  *  Input......: h			handle
  *				 pciBusNbr	pci bus number (merged with domain)
@@ -1508,15 +1509,15 @@ done:
  *  Output.....: returns: 	error code (only fails if config access error)
  *				 *vendorIDP vendor id
  *				 *deviceIDP device id
- *				 *headerTypeP header type 
+ *				 *headerTypeP header type
  *				 *secondBusP secondary bus number (only valid for bridge)
  *  Globals....: -
  ****************************************************************************/
 static int32 PciParseDev(
 	BBIS_HANDLE *h,
 #ifdef OSS_VXBUS_SUPPORT
-	VXB_DEVICE_ID busCtrlID, 
-#endif	
+	VXB_DEVICE_ID busCtrlID,
+#endif
 	u_int32 pciBusNbr,
 	u_int32 pciDevNbr,
 	int32 *vendorIDP,
@@ -1527,7 +1528,7 @@ static int32 PciParseDev(
 	int32 error;
 	int32 pciMainDevNbr;
 	int32 pciDevFunc;
-	
+
 	pciMainDevNbr = pciDevNbr;
 	pciDevFunc = 0;
 
@@ -1537,71 +1538,71 @@ static int32 PciParseDev(
     	pciDevFunc = pciDevNbr >> 5;
     	pciMainDevNbr = ( pciDevNbr & 0x0000001f );
     }
-    
+
 	/*--- check to see if device present ---*/
-	error = OSS_PciGetConfig( h->osHdl, 
+	error = OSS_PciGetConfig( h->osHdl,
 #ifdef OSS_VXBUS_SUPPORT
-							busCtrlID, 
-#endif	
-							pciBusNbr, pciMainDevNbr, pciDevFunc, 
+							busCtrlID,
+#endif
+							pciBusNbr, pciMainDevNbr, pciDevFunc,
 							OSS_PCI_VENDOR_ID, vendorIDP );
-		
+
 	if( error == 0 )
-		error = OSS_PciGetConfig( h->osHdl, 
+		error = OSS_PciGetConfig( h->osHdl,
 #ifdef OSS_VXBUS_SUPPORT
-							busCtrlID, 
-#endif		
-							pciBusNbr, pciMainDevNbr, pciDevFunc, 
+							busCtrlID,
+#endif
+							pciBusNbr, pciMainDevNbr, pciDevFunc,
 							OSS_PCI_DEVICE_ID, deviceIDP );
 
-	if( error ) 
-		return PciCfgErr(h,"PciParseDev", error, 
+	if( error )
+		return PciCfgErr(h,"PciParseDev", error,
 						 pciBusNbr,pciDevNbr,OSS_PCI_DEVICE_ID);
 
 	if( *vendorIDP == 0xffff && *deviceIDP == 0xffff )
 		return ERR_SUCCESS;		/* not present */
 
 	/*--- device is present, is it a bridge ? ---*/
-	error = OSS_PciGetConfig( h->osHdl, 
+	error = OSS_PciGetConfig( h->osHdl,
 #ifdef OSS_VXBUS_SUPPORT
-							busCtrlID, 
-#endif	
-							pciBusNbr, pciMainDevNbr, pciDevFunc, 
+							busCtrlID,
+#endif
+							pciBusNbr, pciMainDevNbr, pciDevFunc,
 							OSS_PCI_HEADER_TYPE, headerTypeP );
 
-	if( error ) 
-		return PciCfgErr(h,"PciParseDev", error, 
+	if( error )
+		return PciCfgErr(h,"PciParseDev", error,
 						 pciBusNbr,pciDevNbr,OSS_PCI_HEADER_TYPE);
-		
+
 	DBGWRT_2((DBH, " domain %d bus %d dev %d.%d: vend=0x%x devId=0x%x hdrtype %d\n",
-			  OSS_DOMAIN_NBR( pciBusNbr ), OSS_BUS_NBR( pciBusNbr ), pciMainDevNbr, 
+			  OSS_DOMAIN_NBR( pciBusNbr ), OSS_BUS_NBR( pciBusNbr ), pciMainDevNbr,
 			  pciDevFunc, *vendorIDP, *deviceIDP, *headerTypeP ));
 
-	if( (*headerTypeP & ~OSS_PCI_HEADERTYPE_MULTIFUNCTION) != OSS_PCI_HEADERTYPE_BRIDGE_TYPE )	
+	if( (*headerTypeP & ~OSS_PCI_HEADERTYPE_MULTIFUNCTION) != OSS_PCI_HEADERTYPE_BRIDGE_TYPE )
 		return ERR_SUCCESS;		/* not bridge device */
 
-			
+
 	/*--- it is a bridge, determine its secondary bus number ---*/
-	error = OSS_PciGetConfig( h->osHdl, 
+	error = OSS_PciGetConfig( h->osHdl,
 #ifdef OSS_VXBUS_SUPPORT
-							busCtrlID, 
-#endif	
-							pciBusNbr, pciMainDevNbr, pciDevFunc, 
-							PCI_SECONDARY_BUS_NUMBER | OSS_PCI_ACCESS_8, 
+							busCtrlID,
+#endif
+							pciBusNbr, pciMainDevNbr, pciDevFunc,
+							PCI_SECONDARY_BUS_NUMBER | OSS_PCI_ACCESS_8,
 							secondBusP );
 
-	if( error ) 
-		return PciCfgErr(h,"PciParseDev", error, 
+	if( error )
+		return PciCfgErr(h,"PciParseDev", error,
 						 pciBusNbr,pciDevNbr,
 						 PCI_SECONDARY_BUS_NUMBER | OSS_PCI_ACCESS_8);
-		
+
 	return ERR_SUCCESS;
-}	
+}
 
 /********************************* PciCfgErr ********************************
  *
  *  Description: Print Debug message
- *			   
+ *
  *---------------------------------------------------------------------------
  *  Input......: h				handle
  *               funcName		function name
@@ -1612,8 +1613,8 @@ static int32 PciParseDev(
  *  Output.....: return			error code
  *  Globals....: -
  ****************************************************************************/
-static int32 PciCfgErr( 
-	BBIS_HANDLE *h, 
+static int32 PciCfgErr(
+	BBIS_HANDLE *h,
 	char *funcName,
 	int32 error,
 	u_int32 pciBusNbr,
@@ -1622,7 +1623,7 @@ static int32 PciCfgErr(
 {
 	int32 pciMainDevNbr;
 	int32 pciDevFunc;
-	
+
 	pciMainDevNbr = pciDevNbr;
 	pciDevFunc = 0;
 
@@ -1632,10 +1633,10 @@ static int32 PciCfgErr(
     	pciDevFunc = pciDevNbr >> 5;
     	pciMainDevNbr = ( pciDevNbr & 0x0000001f );
     }
-    
+
 	DBGWRT_ERR((DBH,"*** %s %s: PCI access error 0x%x "
-				"domain %d bus %d dev %d.%d reg 0x%x\n", BBNAME, funcName, error, 
-				OSS_DOMAIN_NBR( pciBusNbr ), OSS_BUS_NBR( pciBusNbr ), pciMainDevNbr, 
+				"domain %d bus %d dev %d.%d reg 0x%x\n", BBNAME, funcName, error,
+				OSS_DOMAIN_NBR( pciBusNbr ), OSS_BUS_NBR( pciBusNbr ), pciMainDevNbr,
 				pciDevFunc, reg ));
 	return error;
 }
@@ -1643,21 +1644,21 @@ static int32 PciCfgErr(
 /********************************* CfgInfoSlot ******************************
  *
  *  Description:  Fulfils the BB_CfgInfo(BBIS_CFGINFO_SLOT) request
- * 
+ *
  *				  The variable-argument list (argptr) contains the following
  *                parameters in the given order:
  *
  *                Input
  *                -----
- *                mSlot (u_int32) - device slot number  
+ *                mSlot (u_int32) - device slot number
  *
  *                Output
  *                ------
  *                occupied (u_int32*) - occupied information
- *                 - pluggable device: 
+ *                 - pluggable device:
  *                   BBIS_SLOT_OCCUP_YES if slot is occupied
  *                   or BBIS_SLOT_OCCUP_NO if slot is empty
- *                 - onboard device: 
+ *                 - onboard device:
  *                   BBIS_SLOT_OCCUP_ALW if device is enabled
  *                   or BBIS_SLOT_OCCUP_DIS if device is disabled
  *
@@ -1665,7 +1666,7 @@ static int32 PciCfgErr(
  *                  The device id should identify the type of the device
  *                  but should not contain enough information to differentiate
  *                  between two identical devices. If the device id is unknown
- *                  BBIS_SLOT_NBR_UNK must be returned. 
+ *                  BBIS_SLOT_NBR_UNK must be returned.
  *                  - M-Module:
  *                    id-prom-magic-word << 16 | id-prom-module-id
  *                    Example: 0x53460024
@@ -1680,12 +1681,12 @@ static int32 PciCfgErr(
  *					  be 0x00001543.
  *
  *                  Note: The returned device id must be identical to the
- *                        "autoid" value in the device drivers xml file.  
+ *                        "autoid" value in the device drivers xml file.
  *
  *                devRev (u_int32*) - device revision (4-byte hex value)
  *                  M-Module: id-prom-layout-revision << 16 |
  *                            id-prom-product-variant
- *                            example: 0x01091400       
+ *                            example: 0x01091400
  *                  or BBIS_SLOT_NBR_UNK if device revision is unknown
  *
  *                slotName (char*) - slot name
@@ -1709,12 +1710,12 @@ static int32 PciCfgErr(
  *                  characters or blanks. The length of the returned string,
  *                  including the terminating null character, must not exceed
  *                  BBIS_SLOT_STR_MAXSIZE.
- * 
+ *
  *                  Examples:
  *                  - Mezzanines:		"M34", "MS9"
  *                  - Onboard Devices:	"LM78", "F2_GPIO", "I82527"
  *                                      "D203_TRIG"
- *                  
+ *
  *                  If the device name is unknown BBIS_SLOT_STR_UNK must
  *                  be returned.
  *
@@ -1737,7 +1738,7 @@ static int32 CfgInfoSlot( BBIS_HANDLE *h, va_list argptr )	/* nodoc */
 	char	*devName  = va_arg( argptr, char* );
 
 	int32 pciVenId, pciDevId;
-#ifdef OSS_VXBUS_SUPPORT	
+#ifdef OSS_VXBUS_SUPPORT
 	VXB_DEVICE_ID busCtrlID = sysGetMdisBusCtrlID();
 #endif
 
@@ -1749,7 +1750,7 @@ static int32 CfgInfoSlot( BBIS_HANDLE *h, va_list argptr )	/* nodoc */
 	*devName  = '\0';
 
 	/* illegal slot? */
-	if ( (mSlot >= PCI_BBIS_MAX_DEVS) || 
+	if ( (mSlot >= PCI_BBIS_MAX_DEVS) ||
 		 (h->pciDevNbr[mSlot] == PCI_NO_DEV ))
 		return ERR_BBIS_ILL_SLOT;
 
@@ -1767,19 +1768,19 @@ static int32 CfgInfoSlot( BBIS_HANDLE *h, va_list argptr )	/* nodoc */
 	/*
 	 * set device id
 	 */
-	/* get pci-vendor-id and pci-device-id */ 
-	OSS_PciGetConfig( h->osHdl, 
+	/* get pci-vendor-id and pci-device-id */
+	OSS_PciGetConfig( h->osHdl,
 #ifdef OSS_VXBUS_SUPPORT
-			busCtrlID, 
-#endif	
-			OSS_MERGE_BUS_DOMAIN(h->pciBusNbr[mSlot], h->pciDomainNbr), 
+			busCtrlID,
+#endif
+			OSS_MERGE_BUS_DOMAIN(h->pciBusNbr[mSlot], h->pciDomainNbr),
 	        h->pciDevNbr[mSlot], h->pciFuncNbr[mSlot], OSS_PCI_VENDOR_ID, &pciVenId );
 
-	OSS_PciGetConfig( h->osHdl, 
+	OSS_PciGetConfig( h->osHdl,
 #ifdef OSS_VXBUS_SUPPORT
-			busCtrlID, 
-#endif	
-			OSS_MERGE_BUS_DOMAIN(h->pciBusNbr[mSlot], h->pciDomainNbr), 
+			busCtrlID,
+#endif
+			OSS_MERGE_BUS_DOMAIN(h->pciBusNbr[mSlot], h->pciDomainNbr),
 	        h->pciDevNbr[mSlot], h->pciFuncNbr[mSlot], OSS_PCI_DEVICE_ID, &pciDevId );
 
 	/* assemble our device id */
@@ -1787,17 +1788,17 @@ static int32 CfgInfoSlot( BBIS_HANDLE *h, va_list argptr )	/* nodoc */
 		       (pciDevId & 0x0000ffff);
 
 	/* set revision (use pci-revision) */
-	OSS_PciGetConfig( h->osHdl, 
+	OSS_PciGetConfig( h->osHdl,
 #ifdef OSS_VXBUS_SUPPORT
-			busCtrlID, 
-#endif	
-			OSS_MERGE_BUS_DOMAIN(h->pciBusNbr[mSlot], h->pciDomainNbr), 
+			busCtrlID,
+#endif
+			OSS_MERGE_BUS_DOMAIN(h->pciBusNbr[mSlot], h->pciDomainNbr),
 	        h->pciDevNbr[mSlot], h->pciFuncNbr[mSlot], OSS_PCI_REVISION_ID, (int32*)devRev );
 
 	/* set device name (from descriptor or unknown) */
 	OSS_StrCpy( h->osHdl, h->devName[mSlot], devName );
 
-	/* return on success */ 
+	/* return on success */
 	return ERR_SUCCESS;
 }
 
