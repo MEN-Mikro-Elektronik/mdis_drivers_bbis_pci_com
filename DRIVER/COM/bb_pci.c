@@ -434,8 +434,8 @@ static int32 PCI_Init(
     /* get DEBUG_LEVEL_DESC */
     status = DESC_GetUInt32(h->descHdl, OSS_DBG_DEFAULT, &value,
 				"DEBUG_LEVEL_DESC");
-    if ( status && (status!=ERR_DESC_KEY_NOTFOUND) )
-        return( Cleanup(h,status) );
+	if ( status && (status!=ERR_DESC_KEY_NOTFOUND) )
+		return( Cleanup(h,status) );
 
 	/* set debug level for DESC module */
 	DESC_DbgLevelSet(h->descHdl, value);
@@ -444,8 +444,8 @@ static int32 PCI_Init(
     status = DESC_GetUInt32( h->descHdl, OSS_DBG_DEFAULT,
 							 &(h->debugLevel),
                 "DEBUG_LEVEL");
-    if ( status && (status!=ERR_DESC_KEY_NOTFOUND) )
-        return( Cleanup(h,status) );
+	if ( status && (status!=ERR_DESC_KEY_NOTFOUND) )
+		return( Cleanup(h,status) );
 
 	/* PCI_DOMAIN_NUMBER - optional */
 	status = DESC_GetUInt32( h->descHdl, 0, &h->pciDomainNbr,
@@ -458,8 +458,8 @@ static int32 PCI_Init(
 	/*--- get PCI bus ---*/
     status = DESC_GetUInt32( h->descHdl, 0,
 							 &pciBusNbr, "PCI_BUS_NUMBER");
-    if ( status && (status!=ERR_DESC_KEY_NOTFOUND) )
-        return( Cleanup(h,status) );
+	if ( status && (status!=ERR_DESC_KEY_NOTFOUND) )
+		return( Cleanup(h,status) );
 
 	if( status == ERR_DESC_KEY_NOTFOUND ){
 
@@ -554,8 +554,8 @@ static int32 PCI_Init(
 
 	/* exit descHdl */
     status = DESC_Exit( &h->descHdl );
-    if(status)
-        return( Cleanup(h,status) );
+	if(status)
+		return( Cleanup(h,status) );
 
 	/*--- check if any device specified ---*/
 	if( h->devCount == 0 ){
