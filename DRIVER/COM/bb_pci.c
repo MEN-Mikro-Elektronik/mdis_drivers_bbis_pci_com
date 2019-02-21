@@ -91,70 +91,9 @@
  *     Required: ---
  *     Switches: _ONE_NAMESPACE_PER_DRIVER_
  *
- *-------------------------------[ History ]---------------------------------
- *
- * $Log: bb_pci.c,v $
- * Revision 1.13  2012/09/12 11:22:11  sy
- * Add OSS_VXBUS_SUPPORT to support multiple pci domains
- *
- * Revision 1.12  2012/08/08 11:05:08  ts
- * R: 1. using bridge as MDIS target MDIS wasnt possible since recursive DevBridgeCheck
- *    2. devices behind Pericom bridge on F223 were not evaluated
- * M: 1. introduced descriptor key SKIP_DEV_BRIDGE_CHECK to skip recursive search
- *    2. fixed bug in condition if a found device is bridge in CheckDevBridge()
- *
- * Revision 1.11  2011/05/19 16:00:42  CRuff
- * R: 1. support of pci domains
- * M: 1a) added handling of code BBIS_CFGINFO_PCI_DOMAIN to CHAMELEON_CfgInfo()
- *    1b) added new member pciDomainNbr to BBIS_HANDLE
- *    1c) extend debug prints of pci bus number to also print the domain number
- *    1d) call all occurrences of OSS_PciXetConfig with merged bus and domain
- *    1e) in ParsePciPath(): look for root device on all busses instead of
- *        expecting root device on bus 0
- *
- * Revision 1.10  2009/08/07 15:33:48  CRuff
- * R:1. Porting to MDIS5 (according porting guide rev. 0.7)
- *   2. DESC handle not closed in init routine
- * M:1.a) added support for 64bit (API)
- *     b) support multifunction bridges in PCI bus path
- *   2. added DESC_Exit() in PCI_Init()
- *
- * Revision 1.9  2006/12/20 12:48:16  ufranke
- * fixed
- *  - function pointer setIrqHandle should be NULL if not implemented
- *    or must be implemented completely
- *
- * Revision 1.8  2006/12/15 16:18:51  ts
- * replaced BBIS fkt13 with setIrqHandle
- *
- * Revision 1.7  2005/06/21 14:48:06  UFranke
- * cosmetics
- *
- * Revision 1.6  2004/09/07 15:58:51  dpfeuffer
- * slot range check was wrong
- *
- * Revision 1.5  2004/06/21 14:06:18  dpfeuffer
- * Enhancements for PnP OS implemented:
- * - PCI_BrdInfo(BBIS_BRDINFO_BRDNAME)
- * - PCI_CfgInfo(BBIS_CFGINFO_SLOT)
- * - PCI_CfgInfo(BBIS_CFGINFO_PCI_FUNCNBR)
- * - descriptor key FUNCTION_SLOT_n and DEVNAME_SLOT_n added
- *
- * Revision 1.4  2001/12/07 09:41:49  Franke
- * cosmetics
- *
- * Revision 1.3  2000/08/30 16:36:36  Schmidt
- * bb_pci.h added
- *
- * Revision 1.2  1999/08/11 15:53:03  Schmidt
- * cosmetics
- * PciParseDev : OSS_PciGetConfig - register access mask was wrong
- *
- * Revision 1.1  1999/08/09 15:25:37  kp
- * Initial Revision
  *
  *---------------------------------------------------------------------------
- * (c) Copyright by MEN mikro elektronik GmbH, Nuremberg, Germany
+ * Copyright (c) 2019, MEN Mikro Elektronik GmbH
  ******************************************************************************/
 /*
  * This program is free software: you can redistribute it and/or modify
