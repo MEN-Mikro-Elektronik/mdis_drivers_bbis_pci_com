@@ -462,7 +462,7 @@ static int32 PCI_Init(
 			/* get FUNCTION_SLOT_n */
 			status = DESC_GetUInt32( h->descHdl, 0, &value,
 									 "FUNCTION_SLOT_%d", i );
-	#if DBG
+	#ifdef DBG
 			if( status == ERR_SUCCESS )
 				DBGWRT_2(( DBH, " FUNCTION_SLOT_%d = 0x%x\n", i, value ));
 	#endif
@@ -483,7 +483,7 @@ static int32 PCI_Init(
 									 &devNameSize, "DEVNAME_SLOT_%d", i );
 			if ( status && (status!=ERR_DESC_KEY_NOTFOUND) )
 				return( Cleanup(h,status) );
-	#if DBG
+	#ifdef DBG
 			if( status == ERR_SUCCESS )
 				DBGWRT_2(( DBH, " DEVNAME_SLOT_%d = %s\n", i, h->devName[i] ));
 	#endif
