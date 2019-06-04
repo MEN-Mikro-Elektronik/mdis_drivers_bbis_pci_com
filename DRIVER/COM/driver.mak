@@ -1,8 +1,6 @@
 #***************************  M a k e f i l e  *******************************
 #  
 #         Author: kp
-#          $Date: 1999/08/09 15:25:38 $
-#      $Revision: 1.1 $
 #  
 #    Description: Makefile definitions for the PCI BBIS driver
 #                      
@@ -24,12 +22,17 @@
 
 
 MAK_NAME=pci
+# the next line is updated during the MDIS installation
+STAMPED_REVISION="mdis_drivers_bbis_pci_com_02_36-1-g12829c2-dirty_2019-04-23"
+
+DEF_REVISION=MAK_REVISION=$(STAMPED_REVISION)
 
 MAK_LIBS=$(LIB_PREFIX)$(MEN_LIB_DIR)/desc$(LIB_SUFFIX)	\
          $(LIB_PREFIX)$(MEN_LIB_DIR)/oss$(LIB_SUFFIX)	\
 	 	 $(LIB_PREFIX)$(MEN_LIB_DIR)/dbg$(LIB_SUFFIX)
 
-MAK_SWITCH=$(SW_PREFIX)MAC_MEM_MAPPED	 	 
+MAK_SWITCH=$(SW_PREFIX)MAC_MEM_MAPPED	 	  \
+		$(SW_PREFIX)$(DEF_REVISION)
 
 MAK_INCL=$(MEN_INC_DIR)/bb_pci.h	\
 		 $(MEN_INC_DIR)/bb_defs.h	\

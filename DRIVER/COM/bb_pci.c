@@ -4,8 +4,6 @@
  *      Project: PCI board handler
  *
  *       Author: kp
- *        $Date: 2012/09/12 11:22:11 $
- *    $Revision: 1.13 $
  *
  *  Description: Generic PCI Base Board handler
  *
@@ -165,6 +163,7 @@ typedef struct {
 #include <MEN/bb_entry.h>	/* bbis jumptable		*/
 #include <MEN/bb_pci.h>		/* PCI bbis header file	*/
 
+static const char IdentString[]=MENT_XSTR(MAK_REVISION);
 
 /*-----------------------------------------+
 |  GLOBALS                                 |
@@ -1186,9 +1185,7 @@ static int32 PCI_Unused( void )		/* nodoc */
  ****************************************************************************/
 static char* Ident( void )		/* nodoc */
 {
-	return (
-		"PCI - PCI"
-		"  Base Board Handler: $Id: bb_pci.c,v 1.13 2012/09/12 11:22:11 sy Exp $" );
+	return( (char*) IdentString );
 }
 
 /********************************* Cleanup **********************************
